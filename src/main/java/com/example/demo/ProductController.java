@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -22,17 +23,31 @@ public class ProductController {
 		 }
 	@PostMapping("/products")
 	public String addProduct(@ModelAttribute("product") Product product) {
-		System.out.println(product);
 		productRepo.save(product);
 		return "redirect:/products";
 	}
 	
-	@GetMapping("/products/update")
-	public String updateProduct(Model model) {
+	@PostMapping("/products/update")
+	public String updateProduct(@ModelAttribute("product")Product product) {
+		productRepo.save(product);
+		return "redirect:/products";
+	}
+	
+	@GetMapping("/products/update/{id}")
+	public String updateProduct(@PathVariable("id") int id, Model model) {
 		String msg="update";
 		model.addAttribute("msg", msg);
+		Product pd=productRepo.findById(id).get();
+		model.addAttribute("product",pd);
 		 return "products";
 		 }
+	
+	@GetMapping("/products/delete/{id}")
+	public String deleteProduct(@PathVariable("id") int id, Model model) {
+		Product pd=productRepo.findById(id).get();
+		productRepo.delete(pd);
+		return "redirect:/products";
+	}
 	
 	@GetMapping("/products/add")
 	public String addProduct(Model model) {
